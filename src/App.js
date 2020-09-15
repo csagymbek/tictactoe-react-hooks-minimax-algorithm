@@ -3,7 +3,7 @@ import Game from "./components/Game";
 import styled from "styled-components";
 import "papercss/dist/paper.min.css";
 
-function App() {
+const App = () => {
   return (
     <Main>
       <Game />
@@ -12,10 +12,10 @@ function App() {
 }
 
 const Main = styled.main `
-    display: flex;
-    justify-conten: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 `
 
 export default App
