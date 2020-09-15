@@ -14,6 +14,7 @@ export default function App() {
 const Main = styled.main `
   display: flex;
   justify-content: center;
-  height: 100vh;
   align-items: center;
+  height: 100vh;
 `;
+

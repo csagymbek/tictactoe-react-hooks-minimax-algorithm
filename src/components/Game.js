@@ -27,11 +27,11 @@ export default function Game() {
 
     return (
         <Container dims={DIMS}>
-            {squares.map((val, idx) => {
-                const isActive = val !== null;
+            {squares.map((el, idx) => {
+                const isActive = el !== null;
                 return (
                     <Square key={idx} onClick={() => humanMove(idx)}>
-                        {isActive && <Marker>{val === PLAYER_X ? "X" : "O"}</Marker>}
+                        {isActive && <Marker>{el === PLAYER_X ? "X" : "O"}</Marker>}
                     </Square>
                 );
             })}
