@@ -2,9 +2,9 @@
 
 * `npm i styled-components papercss react-modal`
 
-* `import styled from "styled-components";`
+* `import styled from "styled-components"`
 
-* `import "papercss/dist/paper.min.css";`
+* `import "papercss/dist/paper.min.css"`
 
 2. Adding constants to a separate constants.js.
 
