@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import styled from "styled-components";
-import {DIMS, SQUARE_DIMS, DRAW, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
+import {DIMS, SQUARE_DIMS, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
 import {getRandomInt, switchPlayers} from "../util";
 
 const grid = new Array(DIMS ** 2).fill(null);
 
 export default function Game() {
     const [squares, setSquares] = useState(grid);
-    const [players, setPlayers] = useState({human: null, computer: null});
+    const [players, setPlayers] = useState({human: PLAYER_X, computer: PLAYER_O});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
 
     const move = (idx, player) => {
@@ -24,18 +24,18 @@ export default function Game() {
         }
     };
 
-   const computerMove = () => {
-       const idx = getRandomInt(0, 8);
-       while(squares[idx]){
-           idx = getRandomInt(0, 8);
-       }
-       move(idx, players.computer);
-   };
+    const computerMove = () => {
+        let idx = getRandomInt(0, 8);
+        while(squares[idx]){
+            idx = getRandomInt(0, 8);
+        }
+        move(idx, players.computer);
+    };
 
-   const choosePlayer = option => {
-       setPlayers({human: option, computer: switchPlayers(option)});
-       setGameState(GAME_STATES.inProgress);
-   };
+    const choosePlayer = option => {
+        setPlayers({human: option, computer: switchPlayers(option)});
+        setGameState(GAME_STATES.inProgress);
+    };
 
     return gameState === GAME_STATES.notStarted ? <Screen>
         <Inner>
