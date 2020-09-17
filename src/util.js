@@ -9,4 +9,3 @@ export const getRandomInt = (min, max) => {
 export const switchPlayers = player => {
     return player === PLAYER_X ? PLAYER_O : PLAYER_X;
 };
-

@@ -4,11 +4,7 @@ import "papercss/dist/paper.min.css";
 import Game from "./components/Game";
 
 export default function App() {
-  return (
-    <Main>
-      <Game />
-    </Main>
-  );
+  return <Main><Game /></Main>;
 }
 
 const Main = styled.main`
