@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styled from "styled-components";
-import {DIMS, SQUARE_DIMS, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
+import {DIMS, SQUARE_DIMS, DRAW, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
 import {getRandomInt, switchPlayers} from "../util";
 
 const grid = new Array(DIMS ** 2).fill(null);
@@ -10,26 +10,26 @@ export default function Game() {
     const [players, setPlayers] = useState({human: PLAYER_X, computer: PLAYER_O});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
 
-    const move = (idx, player) => {
+    const move = (i, player) => {
         setSquares(squares => {
             const squaresCopy = [...squares];
-            squaresCopy[idx] = player;
+            squaresCopy[i] = player;
             return squaresCopy;
         });
     };
 
-    const humanMove = idx => {
-        if(!squares[idx]){
-            move(idx, players.human);
+    const humanMove = i => {
+        if(!squares[i]){
+            move(i, players.human);
         }
     };
 
     const computerMove = () => {
-        let idx = getRandomInt(0, 8);
-        while(squares[idx]){
-            idx = getRandomInt(0, 8);
+        let i = getRandomInt(0, 8);
+        while(squares[i]){
+            i = getRandomInt(0, 8);
         }
-        move(idx, players.computer);
+        move(i, players.computer);
     };
 
     const choosePlayer = option => {
@@ -47,14 +47,31 @@ export default function Game() {
             </ButtonRow>
         </Inner>
     </Screen> : <Container dims={DIMS}>
-            {squares.map((el, idx) => {
-                const isActive = el !== null;
-                return <Square key={idx} onClick={() => humanMove(idx)}>
-                    {isActive && <Marker>{el === PLAYER_X ? "X" : "O"}</Marker>}
-                </Square>
-            })}
+        {squares.map((square, i) => {
+            const isActive = square !== null;
+            return <Square key={i} onClick={() => humanMove(i)}>
+                {isActive && <Marker>{square === PLAYER_X ? "X" : "O"}</Marker>}
+            </Square>
+        })}
     </Container>
 }
+
+const Screen = styled.div``;
+
+const Inner = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+`;
+
+const ChooseText = styled.p``;
+
+const ButtonRow = styled.div`
+    display: flex;
+    width: 150px;
+    justify-content: space-between;
+`;
 
 const Container = styled.div`
     display: flex;
@@ -78,21 +95,4 @@ const Square = styled.div`
 
 const Marker = styled.p`
     font-size: 68px;
-`;
-
-const Screen = styled.div``;
-
-const Inner = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 30px;
-`;
-
-const ChooseText = styled.p``;
-
-const ButtonRow = styled.div`
-    display: flex;
-    width: 150px;
-    justify-content: space-between;
 `;
