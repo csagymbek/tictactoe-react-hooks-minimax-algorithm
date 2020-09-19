@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from "styled-components";
 import {DIMS, SQUARE_DIMS, DRAW, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
 import {getRandomInt, switchPlayers} from "../util";
@@ -9,6 +9,7 @@ export default function Game() {
     const [squares, setSquares] = useState(grid);
     const [players, setPlayers] = useState({human: PLAYER_X, computer: PLAYER_O});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
+    const [nextMove, setNextMove] = useState(null);
 
     const move = (i, player) => {
         setSquares(squares => {
@@ -19,10 +20,21 @@ export default function Game() {
     };
 
     const humanMove = i => {
-        if(!squares[i]){
+        if(!squares[i] && nextMove === players.human){
             move(i, players.human);
+            setNextMove(players.computer);
         }
     };
+
+    useEffect(() => {
+        let timeout;
+        if(nextMove !== null && nextMove === players.computer && gameState !== GAME_STATES.over){
+            timeout = setTimeout(() => {
+                computerMove();
+            }, 500);
+        }
+        return timeout && clearTimeout(timeout);
+    }, [nextMove, computerMove, players.computer, gameState]);
 
     const computerMove = () => {
         let i = getRandomInt(0, 8);
