@@ -11,6 +11,37 @@ export default function Game() {
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
     const [nextMove, setNextMove] = useState(null);
 
+    // const move = useCallback((i, player) => {
+    //     if(player && gameState === GAME_STATES.inProgress){
+    //         setSquares(squares => {
+    //             const squaresCopy = [...squares];
+    //             squaresCopy[i] = player;
+    //             return squaresCopy;
+    //         });
+    //     }
+    // }, [gameState]);
+
+    // const humanMove = i => {
+    //     if(!squares[i] && nextMove === players.human){
+    //         move(i, players.human);
+    //         setNextMove(players.computer);
+    //     }
+    // };
+    
+    // const computerMove = useCallback(() => {
+    //     let i = getRandomInt(0, 8);
+    //     while(squares[i]){
+    //         i = getRandomInt(0, 8);
+    //     }
+    //     move(i, players.computer);
+    // }, [squares, move, players]);
+    
+    // const choosePlayer = option => {
+    //     setPLayers({human: option, computer: switchPlayers(option)});
+    //     setGameState(GAME_STATES.inProgress);
+    //     // setting the human player to make the first move 
+    //     setNextMove(PLAYER_X);
+    // };
     const move = useCallback((i, player) => {
         if(player && gameState === GAME_STATES.inProgress){
             setSquares(squares => {
@@ -27,28 +58,36 @@ export default function Game() {
             setNextMove(players.computer);
         }
     };
-    
+
     const computerMove = useCallback(() => {
         let i = getRandomInt(0, 8);
-        while(squares[i]){
+        while(squares[i]){//it causes an infinite loop
             i = getRandomInt(0, 8);
         }
         move(i, players.computer);
     }, [squares, move, players]);
-    
+
     const choosePlayer = option => {
         setPLayers({human: option, computer: switchPlayers(option)});
         setGameState(GAME_STATES.inProgress);
-        // setting the human player to make the first move 
+        //setting the human player to make the first move
         setNextMove(PLAYER_X);
     };
     
+    // useEffect(() => {
+    //     let timeout;
+    //     if(nextMove !== null && nextMove === players.computer && gameState !== GAME_STATES.over){
+    //         // some delay to make computer move look more natural 
+    //         timeout = setTimeout(() => {computerMove()}, 500);
+    //     }
+    // }, [nextMove, computerMove, players.computer, gameState]);
     useEffect(() => {
         let timeout;
         if(nextMove !== null && nextMove === players.computer && gameState !== GAME_STATES.over){
-            // some delay to make computer move look natural 
+            //some delay to make computer move look more natural
             timeout = setTimeout(() => {computerMove()}, 500);
         }
+        return () => timeout && clearTimeout(timeout);
     }, [nextMove, computerMove, players.computer, gameState]);
 
     return gameState === GAME_STATES.notStarted ? <Screen>
