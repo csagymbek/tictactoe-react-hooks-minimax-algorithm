@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import styled from "styled-components";
 import {DIMS, SQUARE_DIMS, DRAW, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
 import {getRandomInt, switchPlayers} from "../util";
@@ -7,17 +7,19 @@ const grid = new Array(DIMS ** 2).fill(null);
 
 export default function Game() {
     const [squares, setSquares] = useState(grid);
-    const [players, setPlayers] = useState({human: PLAYER_X, computer: PLAYER_O});
+    const [players, setPLayers] = useState({human: PLAYER_X, computer: PLAYER_O});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
     const [nextMove, setNextMove] = useState(null);
 
-    const move = (i, player) => {
-        setSquares(squares => {
-            const squaresCopy = [...squares];
-            squaresCopy[i] = player;
-            return squaresCopy;
-        });
-    };
+    const move = useCallback((i, player) => {
+        if(player && gameState === GAME_STATES.inProgress){
+            setSquares(squares => {
+                const squaresCopy = [...squares];
+                squaresCopy[i] = player;
+                return squaresCopy;
+            });
+        }
+    }, [gameState]);
 
     const humanMove = i => {
         if(!squares[i] && nextMove === players.human){
@@ -25,29 +27,29 @@ export default function Game() {
             setNextMove(players.computer);
         }
     };
-
-    useEffect(() => {
-        let timeout;
-        if(nextMove !== null && nextMove === players.computer && gameState !== GAME_STATES.over){
-            timeout = setTimeout(() => {
-                computerMove();
-            }, 500);
-        }
-        return timeout && clearTimeout(timeout);
-    }, [nextMove, computerMove, players.computer, gameState]);
-
-    const computerMove = () => {
+    
+    const computerMove = useCallback(() => {
         let i = getRandomInt(0, 8);
         while(squares[i]){
             i = getRandomInt(0, 8);
         }
         move(i, players.computer);
-    };
-
+    }, [squares, move, players]);
+    
     const choosePlayer = option => {
-        setPlayers({human: option, computer: switchPlayers(option)});
+        setPLayers({human: option, computer: switchPlayers(option)});
         setGameState(GAME_STATES.inProgress);
+        // setting the human player to make the first move 
+        setNextMove(PLAYER_X);
     };
+    
+    useEffect(() => {
+        let timeout;
+        if(nextMove !== null && nextMove === players.computer && gameState !== GAME_STATES.over){
+            // some delay to make computer move look natural 
+            timeout = setTimeout(() => {computerMove()}, 500);
+        }
+    }, [nextMove, computerMove, players.computer, gameState]);
 
     return gameState === GAME_STATES.notStarted ? <Screen>
         <Inner>
