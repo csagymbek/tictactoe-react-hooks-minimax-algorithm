@@ -7,7 +7,7 @@ const grid = new Array(DIMS ** 2).fill(null);
 
 export default function Game() {
     const [squares, setSquares] = useState(grid);
-    const [players, setPLayers] = useState({human: PLAYER_X, computer: PLAYER_O});
+    const [players, setPLayers] = useState({human: null, computer: null});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
     const [nextMove, setNextMove] = useState(null);
 
@@ -40,6 +40,7 @@ export default function Game() {
         setPLayers({human: option, computer: switchPlayers(option)});
         setGameState(GAME_STATES.inProgress);
         //setting the human player to make the first move
+        // setNextMove(players.human);
         setNextMove(PLAYER_X);
     };
     
