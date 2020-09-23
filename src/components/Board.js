@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import {DIMS, DRAW} from "../constants";
+import {DRAW, DIMS} from "../constants";
 
 export default class Board extends Component {
     constructor(squares){
+        super(squares);
         this.squares = squares || new Array(DIMS ** 2).fill(null)
     }
 
     getEmptySquares = (squares = this.squares) => {
-        let grid = [];
-        squares.forEach((square, i) => {
-            if(!square) grid.push(i);
+        const grid = [];
+        squares.map((square, i) => {
+            if(!square){
+                grid.push(i);
+            }
         });
         return grid;
     }
@@ -25,9 +28,7 @@ export default class Board extends Component {
             [6, 7, 8],
             [0, 3, 6],
             [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
+            [2, 5, 8]
         ];
         let res;
         winningCombos.forEach((el, i) => {
@@ -37,12 +38,11 @@ export default class Board extends Component {
                 res = DRAW;
             }
         });
-
         return res;
     }
 
-    getClone = (squares = this.squares) => {
-        return new Board([...squares]);
+    getClone = () => {
+        return new Board([...this.squares]);
     }
 
     render() {

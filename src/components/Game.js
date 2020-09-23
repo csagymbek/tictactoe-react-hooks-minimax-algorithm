@@ -2,14 +2,17 @@ import React, {useState, useEffect, useCallback} from 'react';
 import styled from "styled-components";
 import {DIMS, SQUARE_DIMS, DRAW, PLAYER_X, PLAYER_O, GAME_STATES} from "../constants";
 import {getRandomInt, switchPlayers} from "../util";
+import Board from "./Board";
 
 const grid = new Array(DIMS ** 2).fill(null);
+const board = new Board();
 
 export default function Game() {
     const [squares, setSquares] = useState(grid);
     const [players, setPLayers] = useState({human: null, computer: null});
     const [gameState, setGameState] = useState(GAME_STATES.notStarted);
     const [nextMove, setNextMove] = useState(null);
+    const [winner, setWinner] = useState(null);
 
     const move = useCallback((i, player) => {
         if(player && gameState === GAME_STATES.inProgress){
@@ -43,6 +46,11 @@ export default function Game() {
         // setNextMove(players.human);
         setNextMove(PLAYER_X);
     };
+
+    const startNewGame = () => {
+        setGameState(GAME_STATES.notStarted);
+        setSquares(grid);
+    };
     
     useEffect(() => {
         let timeout;
@@ -53,7 +61,30 @@ export default function Game() {
         return () => timeout && clearTimeout(timeout);
     }, [nextMove, computerMove, players.computer, gameState]);
 
-    return gameState === GAME_STATES.notStarted ? <Screen>
+    useEffect(() => {
+        const winner = board.getWinner(squares);
+        const declareWinner = winner => {
+            let winnerStr;
+            switch(winner){
+                case PLAYER_X: 
+                    winnerStr = "Player X wins!";
+                    break;
+                case PLAYER_O:
+                    winnerStr = "Player O wins!";
+                    break;
+                case DRAW:
+                    default: winnerStr = "It's a draw!";
+            }
+            setGameState(GAME_STATES.over);
+            setWinner(winnerStr);
+        }
+        if(winner && gameState !== GAME_STATES.over) declareWinner(winner);
+    }, [squares, nextMove, gameState]);
+
+    switch(gameState){
+        case GAME_STATES.notStarted: 
+        default: 
+        return <Screen>
         <Inner>
             <ChooseText>choose your player</ChooseText>
             <ButtonRow>
@@ -62,14 +93,23 @@ export default function Game() {
                 <button onClick={() => choosePlayer(PLAYER_O)}>O</button>
             </ButtonRow>
         </Inner>
-    </Screen> : <Container dims={DIMS}>
+    </Screen>;
+        case GAME_STATES.inProgress:
+        return <Container dims={DIMS}>
         {squares.map((square, i) => {
             const isActive = square !== null;
             return <Square key={i} onClick={() => humanMove(i)}>
                 {isActive && <Marker>{square === PLAYER_X ? "X" : "O"}</Marker>}
             </Square>
         })}
-    </Container>
+    </Container>;
+    case GAME_STATES.over:
+        return (
+            <div>
+                <p>{winner}</p>
+                <button onClick={startNewGame}>start over</button>
+            </div>
+        );
 }
 
 const Screen = styled.div``;
